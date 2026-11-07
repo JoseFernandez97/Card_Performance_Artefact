@@ -290,6 +290,119 @@ Herramienta utilizada: Claude.
 
 ---
 
+### Prompts utilizados
+
+**1. Perfil de calidad de datos** (antes de limpiar):
+
+<details>
+<summary>Ver prompt</summary>
+
+```text
+Actúa como analista de calidad de datos. Te paso las columnas de una tabla "db_transac":
+card_id: Número único de tarjeta
+product_name: Nombre del producto (Tarjeta)
+product_type: Tipo de producto (Crédito, Débito o Prepago)
+amt: Monto de la transacción en USD
+is_xb: Indicador (flag) que es 1 cuando la transacción es internacional
+is_contactless: Indicador (flag) que es 1 cuando la transacción fue usando tecnología contactless
+prch_date: Fecha de la transacción
+prch_time: Hora de la transacción
+ctry_card: País de emisión de la tarjeta
+ctry_mrch: País donde se realizó la compra (país del comercio)
+mrch: Nombre del comercio
+mcg_id: Identificador de MCG (Merchant Category Group o Código de Categoría del Comercio)
+
+Hay una tabla dimensión "mcg_list" con los siguientes campos:
+mcg: Identificador de MCG (Merchant Category Group o Código de Categoría del Comercio)
+mcg_name: Nombre de la categoría del comercio
+
+Para cada columna: (1) cuenta valores vacíos y valores no convertibles a su tipo esperado; (2) si es categórica, lista todos los valores distintos con su frecuencia; (3) detecta valores que sean iguales al normalizar (minúsculas, sin acentos, sin espacios) o que tengan variantes de idioma; (4) para cada par de columnas que deberían ser coherentes entre sí, mide qué porcentaje de filas se contradice. Para columnas numéricas, reporta mínimo, máximo, mediana, percentiles 1 y 99, cantidad de negativos y cantidad de valores fuera de 1,5 veces el rango intercuartílico. No propongas reglas de limpieza: solo muestra los hallazgos con sus conteos.
+```
+
+</details>
+
+**2. Prompt de diseño del dashboard** (con el brief de marca y la referencia de Microsoft):
+
+<details>
+<summary>Ver prompt</summary>
+
+```text
+Eres un especialista senior en Power BI, Business Intelligence, UX Analytics, Data Visualization y Storytelling Ejecutivo. Diseñas reportes y dashboards para VP, gerencias y comités, siguiendo el estilo visual corporativo del equipo.
+
+Para diseñar la propuesta del dashboard, genera una idea de mockup, diseño, distribución del mockup utiliza la imagen adjunta de un dashboard utiliza como referencia la imagen adjunta: property management dashboard en power bi. Úsala como base principal, respeta su estilo, distribución regional y por países, navegación y jerarquía. Adicionalmente, te adjunto la interfaz de inicio de sesión, la primera página del dashboard ya creada para que continúes con la paleta de colores aplicada en el resto de páginas.
+
+Además, utiliza el archivo CSV adjunto como base y mantén la lógica del negocio.
+
+Mejora solo experiencia visual, navegación, distribución, espacio, storytelling y eficiencia de lectura. No cambies la esencia del diseño si ya tiene un estilo corporativo definido.
+
+Sigue el siguiente estándar visual corporativo de la marca: MASTERPLOP, logo adjunto.
+La marca utiliza los principales colores que tienen un significado:
+- Azul: #1A56DB (Confianza y seguridad)
+- Amarillo: #FBBF24 (Energía y transacciones rápidas)
+- Morado: #7C3AED (Innovación tecnológica)
+
+Con estos principales colores utiliza esta paleta: #1A56DB, #7C3AED, #FBBF24, #295F94, #779ADA.
+
+- El equipo solicitante es de Marketing, utiliza UX y UI para el desarrollo del dashboard, deberán reflejar la identidad visual y el buen ambiente que existe dentro.
+- Fondo blanco o gris muy claro.
+- Encabezado superior limpio con logo Masterplop o corporativo a la izquierda.
+- Título principal con subtítulo ejecutivo debajo.
+- Navegación superior entre vistas: pestaña activa y pestañas secundarias (podría ir como un panel de navegación a la izquierda).
+- Filtros ocultos en un panel lateral (a la derecha), con ícono de filtro visible, contador de filtros aplicados y un componente "Filtro aplicado / Filtros aplicados".
+- KPIs compactos (máximo 6 por página).
+- Tablas ejecutivas financieras.
+- Gráficos funcionales, que apliquen UX y UI; evalúa realizar los gráficos con HTML.
+- Bordes suaves gris claro. Encabezados por bloque.
+- Tooltips para análisis adicional y drill-through para detalle.
+- Colores: blanco, gris claro, gris oscuro para texto, rojo suave para alertas relevantes. Semáforos solo cuando aporten valor.
+- Panel de navegación vertical a la izquierda del lienzo. Que sean las páginas Home, Overview, Details.
+- Diseño ejecutivo y limpio, con máximo aprovechamiento del espacio.
+
+Evita: exceso de tarjetas, exceso de colores, gráficos decorativos, diseños recargados, demasiadas páginas, duplicidad de información y visuales que no ayuden a decidir.
+
+El objetivo de lectura de esta propuesta debe responder en menos de 10 segundos:
+1. ¿Qué está pasando?
+2. ¿Qué cambió?
+3. ¿Dónde está el riesgo?
+4. ¿Qué requiere acción?
+5. ¿Dónde puedo profundizar?
+
+Como metodología ten en cuenta estos puntos:
+1. Entendimiento del negocio: objetivo, audiencia, decisiones que soporta, KPIs principales y secundarios, indicadores operativos, alertas, campañas, riesgos y nivel de detalle. Si falta información, infiere una propuesta base razonable sin preguntar más.
+2. Estructura: define para cada página su nombre ejecutivo, objetivo, orden, navegación, botones, drill-through, tooltips, visuales principales y KPIs visibles.
+
+Para el entregable final, el resultado siempre debe incluir una representación visual tipo mockup en Power BI, limpia, ejecutiva y alineada al estándar del equipo.
+1. Diagnóstico general
+2. Hallazgos principales: Volumen, Ticket Trimestral, Ticket Regional, Top Comercios y Adopción Tecnológica.
+3. Estructura recomendada del dashboard
+4. Nombre ejecutivo de cada vista
+5. Layout recomendado por vista
+6. Recomendaciones de tooltips
+7. Recomendaciones de drill-through
+8. Wireframe textual (encabezado, logo o placeholder, título, subtítulo, navegación, panel de filtros, KPIs, visual principal, tabla, alertas, botones, drill-through y tooltips)
+```
+
+</details>
+
+**3. Conexión y medidas en Power BI Desktop (MCP):**
+
+```text
+Conéctate al reporte de Power BI Desktop que tienes abierto.
+
+CREA UNA TABLA DIMENSION CON LOS CAMPOS USER Y PASS Y COMO REGISTROS QUE SEA MASTERPLOP Y 2026. RENOMBRA LA TABLA A LOGIN
+
+CREA UNA TABLA CALENDARIO DONDE TOMES LA MINIMA Y MAXIMA FECHA DE LA TABLA: DB_CARDS_202611061020
+
+CREA UNA MEDIDA EN LA TABLA MEDIDAS_DAX: Olvidaste tu contraseña? , NOMBRAS A LA MEDIDA: CONTRA_TEXTO
+
+en la tabla medidas_dax. crea las siguientes medidas:
+Monto_trx = suma del campo amt
+Nro_tarjetas = un conteo unico de las card_id
+Prom_amt = promedio del campo amt
+
+crea una columna calculada Region en la tabla DB_CARDS_202611061020. en funcion al campo ctry_card cuando sea igual a Peru, Colombia, Brazil, Chile, Argentina, Ecuador, Paraguay, Bolivia o Uruguay sea igual a Sudamerica, cuando sea igual a Mexico y Republica Dominicana debera ser Norteamerica y los otros paises debera ser igual a Centroamerica
+```
+
 ## IV. Cómo ejecutar las consultas
 
 1. Instala [DBeaver](https://dbeaver.io/) o usa Python con `pip install duckdb pandas`.
