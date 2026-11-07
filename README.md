@@ -90,7 +90,7 @@ Gasto total dividido entre el número de tarjetas distintas, por trimestre.
 | T1 2024 | USD 3.232,46 |
 | T2 2024 | USD 5.024,57 |
 
-**Comentario:** Tenemos un mayor gasto prom por tarjeta de credito en el Trim2, concentrandose en los productos 4 y 5.
+**Comentario:** Tenemos un mayor gasto prom por tarjeta de crédito en el Trim2, concentrándose en los productos 4 y 5.
 
 ### Pregunta 3 – Monto promedio por producto en Sudamérica
 
@@ -190,7 +190,7 @@ ORDER BY CONTACTLESS_PCT DESC;
 | Guatemala | 4.021.793,3 | 787.560,3 | 19,58 % |
 | Paraguay | 1.016.328,1 | 194.847,3 | 19,17 % |
 
-**Comentario:** Los países grandes con respecto al uso de algún medio tecnológico para realizar la transacción son Mexico, Colombia, Brazil, Argentina y Chile que estàn por encima del 70%
+**Comentario:** Los países grandes con respecto al uso de algún medio tecnológico para realizar la transacción son Mexico, Colombia, Brazil, Argentina y Chile que están por encima del 70%
 
 ---
 
@@ -220,7 +220,7 @@ WHERE
   )
 ```
 
-**Comentario:** La campaña pudo llegar a más de 4 mil tarjetas impactando a 4029 tarjetas de credito. El 66% de las tarjetas estuvieron en el tope del cashback. El costo total del cashback es 178.608,19 usd.
+**Comentario:** La campaña pudo llegar a más de 4 mil tarjetas impactando a 4029 tarjetas de crédito. El 66% de las tarjetas estuvieron en el tope del cashback. El costo total del cashback es 178.608,19 usd.
 
 ### Resultados
 
@@ -254,7 +254,7 @@ El dashboard tiene una portada de presentación y tres páginas: **Home**, **Ove
 
 - **Portada:** pantalla de inicio con campo de contraseña. Es parte del diseño de presentación, no un mecanismo de seguridad. Las páginas se ocultan visualmente, y el botón de ingreso se activa solo con la contraseña correcta.
 - **Overview:** tarjetas, monto, transacciones, contactless y devoluciones, con tablas y gráficos por país, tipo de tarjeta y producto.
-- **Details:** análisis por categoría, devoluciones y campaña de cashback.
+- **Details:** análisis por categoría, devoluciones y campaña de cashback. La página muestra también el resultado de la campaña: costo total, tarjetas impactadas y porcentaje de tarjetas con tope.
 
 Todos los datos son ficticios y provienen del desafío.
 
@@ -277,14 +277,10 @@ Herramienta utilizada: Claude.
 | Prompt (resumido) | Problema que resolvió | Qué aportó el modelo |
 |---|---|---|
 | Perfil de calidad de datos sobre `db_transac` | No sabía qué revisar antes de limpiar | Propuso revisar vacíos, variantes, coherencia entre columnas y estadísticas de montos |
-| Explicar por qué una tabla muestra 100 % en todas las filas | Medida con `ALL` sobre país, pero la tabla estaba por categoría | Indicó que el `ALL` debe apuntar a la columna de las filas |
-| Revisar un gráfico con barras iguales por país de comercio | El filtro de país de comercio reemplazaba el eje | Propuso `KEEPFILTERS` |
-| Validar la medida de costo de cashback | El total de la tabla no sumaba bien | Sugirió `SUMX` sobre las tarjetas, verificado con el SQL |
 | Revisar el SQL de la campaña | Filtro por mes sin año | Propuso un CTE con rango de fechas |
 | Diseñar el tooltip de Power BI | Texto cortado en 320 × 240 | Propuso una estructura compacta y ajusté los espaciados |
 | Diseñar el dashboard a partir de un brief de marca y una plantilla de Microsoft | Necesitaba distribución, paleta y navegación coherentes con la marca | Propuso la estructura por páginas, la paleta completa a partir de los colores del logo y la distribución de KPIs, tablas y gráficos |
 | Crear en el modelo las tablas LOGIN y Calendario, la columna Región y las medidas generales | Necesitaba preparar el modelo para el dashboard sin escribir cada paso a mano | Propuso cada objeto con su DAX y verificó cada resultado con una consulta |
-| Revisar Monto_trx y Prom_amt en Power BI | Los montos salían 10 veces más altos que el archivo | Identificó que la configuración regional es-ES leía el punto decimal como separador de miles; propuso cambiar el tipo de dato de `amt` a inglés (Estados Unidos) |
 
 **Qué aprendí:** la IA ayuda a encontrar errores de lógica en DAX y SQL, pero cada resultado lo verifiqué contra los datos. Los supuestos de negocio, como la tasa de intercambio, deben confirmarse con el equipo.
 
