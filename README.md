@@ -19,7 +19,9 @@ Análisis de transacciones de tarjetas en 17 países de América (enero a junio 
 
 ---
 
-## 1. Datos y limpieza
+## I. Desafío Analytics
+
+### 1. Datos y limpieza
 
 Se trabajó con dos archivos: `db_transac.csv` (2.400.000 transacciones) y `mcg_list.xlsx` (25 categorías de comercio).
 
@@ -40,7 +42,7 @@ Se trabajó con dos archivos: `db_transac.csv` (2.400.000 transacciones) y `mcg_
 
 ---
 
-## 2. Respuestas a las preguntas
+### 2. Respuestas a las preguntas
 
 **Criterio general:** se consideran compras solo los montos positivos (`AMT > 0`). Los montos negativos son devoluciones (2.400 filas) y se excluyen de los indicadores de gasto, no de la pregunta de volumen de tarjetas.
 
@@ -188,11 +190,11 @@ ORDER BY CONTACTLESS_PCT DESC;
 | Guatemala | 4.021.793,3 | 787.560,3 | 19,58 % |
 | Paraguay | 1.016.328,1 | 194.847,3 | 19,17 % |
 
-**Justificación:** el porcentaje se calcula sobre el gasto positivo del país de emisión, igual que en el resto del análisis.
+**Comentario:** Los países grandes con respecto al uso de algún medio tecnológico para realizar la transacción son Mexico, Colombia, Brazil, Argentina y Chile que estàn por encima del 70%
 
 ---
 
-## 3. Reto: campaña de cashback de mayo 2024
+### 3. Reto: campaña de cashback de mayo 2024
 
 **Regla:** 7 % de cashback sobre las compras de tarjetas de crédito emitidas en Chile, realizadas en comercios fuera de Chile en mayo de 2024, con tope de USD 50 por tarjeta.
 
@@ -223,7 +225,9 @@ ORDER BY CONTACTLESS_PCT DESC;
 
 ---
 
-## 4. Dashboard
+## II. Los datos y la marca
+
+### 4. Dashboard
 
 El dashboard tiene una portada de presentación y tres páginas: **Home**, **Overview** y **Details**. Usa la identidad visual de Masterplop (azul `#1A56DB`, amarillo `#FBBF24`, morado `#7C3AED`).
 
@@ -245,7 +249,7 @@ Para abrirlo, instala Power BI Desktop (gratuito) y abre `Dashboard Card Perform
 
 ---
 
-## 5. AI Log
+## III. AI Log
 
 Herramienta utilizada: Claude.
 
@@ -263,7 +267,7 @@ Herramienta utilizada: Claude.
 
 ---
 
-## Cómo ejecutar las consultas
+## IV. Cómo ejecutar las consultas
 
 1. Instala [DBeaver](https://dbeaver.io/) o usa Python con `pip install duckdb pandas`.
 2. Abre `Desafio_Jose Fernandez.sql`.
