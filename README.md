@@ -29,7 +29,6 @@ Se trabajó con dos archivos: `db_transac.csv` (2.400.000 transacciones) y `mcg_
 - **Variantes de texto:** `product_type` tenía 6 variantes (Credit / Credito / Crédito y Debit / Debito / Débito). Los países tenían 4 pares con y sin tilde (Perú/Peru, México/Mexico, Panamá/Panama, República/Republica Dominicana) y Brasil/Brazil en español e inglés.
 - **Fechas:** convivían los formatos `dd/mm/aaaa` y `dd-mm-aaaa`.
 - **Código de categoría sin correspondencia:** 12.000 transacciones tienen `mcg_id = 35`, que no existe en `mcg_list`.
-- **Atípicos de monto:** 246.314 filas (10,3 %) quedan fuera de 1,5 × IQR, casi todas por encima. Se mantienen porque corresponden a compras de montos altos.
 
 ### Limpieza aplicada (`desafio_fernandez.sql`, sección 2)
 
@@ -38,9 +37,6 @@ Se trabajó con dos archivos: `db_transac.csv` (2.400.000 transacciones) y `mcg_
 - Las fechas se convierten con los dos formatos y se crean `ANIO`, `QUARTER` y `DATE`.
 - `MCG_NAME` se obtiene con un `LEFT JOIN` contra `mcg_list`. Los 12.000 registros sin categoría quedan con valor nulo y se muestran como "Sin dato".
 
-### Limitaciones que no se corrigieron
-
-- **Cada comercio tiene más de una categoría.** Los 4.587 comercios aparecen con varios `mcg_id`, así que el análisis se hace por categoría y no por nombre de comercio.
 
 ---
 
@@ -50,7 +46,18 @@ Se trabajó con dos archivos: `db_transac.csv` (2.400.000 transacciones) y `mcg_
 
 ### Pregunta 1 – Volumen: tarjetas por tipo y trimestre
 
-`COUNT(DISTINCT CARD_ID)` agrupado por año, trimestre y tipo de producto, con `AMT > 0`.
+```sql
+SELECT
+ANIO,
+QUARTER,
+PRODUCT_TYPE ,
+COUNT(DISTINCT CARD_ID) AS CARDS
+FROM DB_CARDS
+WHERE AMT > 0
+GROUP BY ANIO,QUARTER,PRODUCT_TYPE ;
+```
+
+Cuenta las tarjetas distintas por año, trimestre y tipo de producto, usando solo montos positivos.
 
 | Trimestre | Tipo | Tarjetas |
 |---|---|---|
@@ -63,7 +70,18 @@ Se trabajó con dos archivos: `db_transac.csv` (2.400.000 transacciones) y `mcg_
 
 ### Pregunta 2 – Ticket trimestral: gasto promedio por tarjeta de crédito
 
-`SUM(AMT) / COUNT(DISTINCT CARD_ID)`, agrupado por trimestre.
+```sql
+SELECT
+ANIO,
+QUARTER,
+PRODUCT_TYPE ,
+ROUND(SUM(AMT) / COUNT(DISTINCT CARD_ID), 2)    AS GASTO_PROM
+FROM DB_CARDS
+WHERE PRODUCT_TYPE = 'Credit' and AMT > 0
+GROUP BY ANIO,QUARTER,PRODUCT_TYPE ;
+```
+
+Gasto total dividido entre el número de tarjetas distintas, por trimestre.
 
 | Trimestre | Gasto promedio por tarjeta |
 |---|---|
@@ -73,6 +91,21 @@ Se trabajó con dos archivos: `db_transac.csv` (2.400.000 transacciones) y `mcg_
 **Justificación:** el gasto por tarjeta es el indicador que pide el enunciado. En T2 sube 55 % por dos factores: cada tarjeta compra más veces (de 19 a 22,5 transacciones por trimestre) y el ticket sube 32 % (de USD 169 a USD 224).
 
 ### Pregunta 3 – Monto promedio por producto en Sudamérica
+
+```sql
+SELECT
+PRODUCT_NAME ,
+ROUND(AVG(AMT),2) AS MTO_PROM,
+count(*) as TRANSACCIONES
+FROM DB_CARDS
+WHERE
+  PRODUCT_TYPE = 'Credit'
+  AND AMT > 0
+  AND CTRY_CARD IN ('Peru', 'Colombia', 'Brazil', 'Chile', 'Argentina',
+                    'Ecuador', 'Paraguay', 'Bolivia', 'Uruguay')
+GROUP BY PRODUCT_NAME
+ORDER BY PRODUCT_NAME;
+```
 
 Se filtra por país de emisión de la tarjeta (`CTRY_CARD`) en Argentina, Bolivia, Brasil, Chile, Colombia, Ecuador, Paraguay, Perú y Uruguay. Se excluyen México, Centroamérica, el Caribe y Panamá.
 
@@ -87,6 +120,19 @@ Se filtra por país de emisión de la tarjeta (`CTRY_CARD`) en Argentina, Bolivi
 **Lectura:** P5 tiene un ticket unas 15 veces mayor que P1, pero la décima parte de sus transacciones. P1 parece ser el producto de uso diario.
 
 ### Pregunta 4 – Top 10 de categorías por porcentaje de gasto
+
+```sql
+SELECT
+MCG_NAME,
+ROUND(SUM(AMT), 2)  AS GASTO,
+ROUND(100 * SUM(AMT) / (SELECT SUM(AMT) FROM DB_CARDS  WHERE AMT > 0), 2)    AS GASTO_PCT
+FROM DB_CARDS
+WHERE
+   AMT > 0  AND MCG_NAME IS NOT NULL
+GROUP BY MCG_NAME
+ORDER BY GASTO DESC
+LIMIT 10;
+```
 
 Se agrupa por `MCG_NAME`, se excluyen los nulos y el porcentaje se calcula sobre el gasto total positivo.
 
@@ -106,6 +152,21 @@ Se agrupa por `MCG_NAME`, se excluyen los nulos y el porcentaje se calcula sobre
 **Justificación:** se usa categoría y no comercio porque cada comercio aparece en varias categorías. El porcentaje incluye todo el gasto positivo, así que los 10 primeros suman el 91,5 % y el resto corresponde a otras categorías.
 
 ### Pregunta 5 – Adopción tecnológica: gasto contactless por país
+
+```sql
+SELECT
+CTRY_CARD ,
+ROUND(SUM(AMT), 2)  AS GASTO,
+ROUND(SUM(
+       CASE WHEN IS_CONTACTLESS = 1 THEN AMT
+       ELSE 0  END), 2) AS GASTO_CONTACTLESS,
+ROUND(100 * SUM(CASE WHEN IS_CONTACTLESS = 1 THEN AMT ELSE 0 END)  / SUM(AMT), 2)   AS CONTACTLESS_PCT
+FROM DB_CARDS
+WHERE
+   AMT > 0
+GROUP BY CTRY_CARD
+ORDER BY CONTACTLESS_PCT DESC;
+```
 
 [Completar con la salida de la consulta: porcentaje de gasto contactless por país, ordenado de mayor a menor.]
 
