@@ -32,7 +32,82 @@ Se trabajó con dos archivos: `db_transac.csv` (2.400.000 transacciones) y `mcg_
 - **Fechas:** convivían los formatos `dd/mm/aaaa` y `dd-mm-aaaa`.
 - **Código de categoría sin correspondencia:** 12.000 transacciones tienen `mcg_id = 35`, que no existe en `mcg_list`.
 
-### Limpieza aplicada (`desafio_fernandez.sql`, sección 2)
+### Limpieza aplicada (`Desafio_Jose Fernandez.sql`, sección 2)
+
+```sql
+CREATE TABLE DB_CARDS AS
+SELECT
+CARD_ID,
+PRODUCT_NAME,
+CASE lower(strip_accents(replace(TRIM(A.PRODUCT_TYPE), ' ', '')))
+        WHEN 'credit'  THEN 'Credit'
+        WHEN 'credito' THEN 'Credit'
+        WHEN 'debit'   THEN 'Debit'
+        WHEN 'debito'  THEN 'Debit'
+    END PRODUCT_TYPE,
+AMT ,
+A.IS_XB ,
+A.IS_CONTACTLESS ,
+CAST(try_strptime(replace(TRIM(A.PRCH_TIME), '.', ':'), '%H:%M:%S') AS TIME) AS HORA_TRX,
+CAST(year(COALESCE(try_strptime(TRIM(A.PRCH_DATE), '%d/%m/%Y'),
+                       try_strptime(TRIM(A.PRCH_DATE), '%d-%m-%Y'))) AS SMALLINT) AS ANIO,
+'T' ||CAST(quarter(COALESCE(try_strptime(TRIM(A.PRCH_DATE), '%d/%m/%Y'),
+                          try_strptime(TRIM(A.PRCH_DATE), '%d-%m-%Y'))) AS TINYINT) AS QUARTER,
+CAST(COALESCE(try_strptime(TRIM(A.PRCH_DATE), '%d/%m/%Y'),
+               try_strptime(TRIM(A.PRCH_DATE), '%d-%m-%Y')) AS DATE) AS DATE,
+COALESCE(
+        CASE lower(strip_accents(replace(TRIM(A.CTRY_CARD), ' ', '')))
+                WHEN 'brazil' THEN 'Brazil'
+                WHEN 'brasil' THEN 'Brazil'
+                WHEN 'mexico' THEN 'Mexico'
+                WHEN 'argentina' THEN 'Argentina'
+                WHEN 'colombia' THEN 'Colombia'
+                WHEN 'chile' THEN 'Chile'
+                WHEN 'ecuador' THEN 'Ecuador'
+                WHEN 'peru' THEN 'Peru'
+                WHEN 'panama' THEN 'Panama'
+                WHEN 'guatemala' THEN 'Guatemala'
+                WHEN 'bolivia' THEN 'Bolivia'
+                WHEN 'republicadominicana' THEN 'Republica Dominicana'
+                WHEN 'elsalvador' THEN 'El Salvador'
+                WHEN 'uruguay' THEN 'Uruguay'
+                WHEN 'costarica' THEN 'Costa Rica'
+                WHEN 'honduras' THEN 'Honduras'
+                WHEN 'nicaragua' THEN 'Nicaragua'
+                WHEN 'paraguay' THEN 'Paraguay'
+        END,
+        strip_accents(TRIM(A.CTRY_CARD))
+    )                                                             AS CTRY_CARD,
+COALESCE(
+        CASE lower(strip_accents(replace(TRIM(A.CTRY_MRCH), ' ', '')))
+                WHEN 'brazil' THEN 'Brazil'
+                WHEN 'brasil' THEN 'Brazil'
+                WHEN 'mexico' THEN 'Mexico'
+                WHEN 'argentina' THEN 'Argentina'
+                WHEN 'colombia' THEN 'Colombia'
+                WHEN 'chile' THEN 'Chile'
+                WHEN 'ecuador' THEN 'Ecuador'
+                WHEN 'peru' THEN 'Peru'
+                WHEN 'panama' THEN 'Panama'
+                WHEN 'guatemala' THEN 'Guatemala'
+                WHEN 'bolivia' THEN 'Bolivia'
+                WHEN 'republicadominicana' THEN 'Republica Dominicana'
+                WHEN 'elsalvador' THEN 'El Salvador'
+                WHEN 'uruguay' THEN 'Uruguay'
+                WHEN 'costarica' THEN 'Costa Rica'
+                WHEN 'honduras' THEN 'Honduras'
+                WHEN 'nicaragua' THEN 'Nicaragua'
+                WHEN 'paraguay' THEN 'Paraguay'
+        END,
+        strip_accents(TRIM(A.CTRY_MRCH))
+    )                                                             AS CTRY_MRCH,
+MRCH ,
+B.MCG_NAME
+FROM DB_TRANSAC A
+LEFT JOIN MCG_LIST B
+ON  A.MCG_ID = B.MCG
+;
+```
 
 - `product_type` se normaliza a `Credit` y `Debit` quitando espacios y tildes.
 - Los países se homologan a un solo nombre en español o inglés, y se conservan los valores no reconocidos.
