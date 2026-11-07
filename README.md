@@ -243,9 +243,6 @@ WHERE
 ### Lectura para el negocio
 
 - El costo es bajo porque el tope limita el premio a las tarjetas con mayor gasto. Dos de cada tres tarjetas lo alcanzaron.
-- El cashback efectivo es 2,44 % y no 7 %. Esto puede generar reclamos si el cliente no entiende el tope.
-- Para que la campaña sea rentable, el ingreso de Masterplop por compra debe superar 2,44 %. Con intercambio de 1,5 % o menos, la campaña pierde dinero.
-- No se puede medir el efecto incremental de la campaña. El gasto de tarjetas chilenas en el exterior ya crecía desde enero y no hay un quiebre en mayo.
 
 ---
 
@@ -286,6 +283,8 @@ Herramienta utilizada: Claude.
 | Revisar el SQL de la campaña | Filtro por mes sin año | Propuso un CTE con rango de fechas |
 | Diseñar el tooltip de Power BI | Texto cortado en 320 × 240 | Propuso una estructura compacta y ajusté los espaciados |
 | Diseñar el dashboard a partir de un brief de marca y una plantilla de Microsoft | Necesitaba distribución, paleta y navegación coherentes con la marca | Propuso la estructura por páginas, la paleta completa a partir de los colores del logo y la distribución de KPIs, tablas y gráficos |
+| Crear en el modelo las tablas LOGIN y Calendario, la columna Región y las medidas generales | Necesitaba preparar el modelo para el dashboard sin escribir cada paso a mano | Propuso cada objeto con su DAX y verificó cada resultado con una consulta |
+| Revisar Monto_trx y Prom_amt en Power BI | Los montos salían 10 veces más altos que el archivo | Identificó que la configuración regional es-ES leía el punto decimal como separador de miles; propuso cambiar el tipo de dato de `amt` a inglés (Estados Unidos) |
 
 **Qué aprendí:** la IA ayuda a encontrar errores de lógica en DAX y SQL, pero cada resultado lo verifiqué contra los datos. Los supuestos de negocio, como la tasa de intercambio, deben confirmarse con el equipo.
 
