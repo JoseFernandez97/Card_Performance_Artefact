@@ -198,6 +198,30 @@ ORDER BY CONTACTLESS_PCT DESC;
 
 **Regla:** 7 % de cashback sobre las compras de tarjetas de crédito emitidas en Chile, realizadas en comercios fuera de Chile en mayo de 2024, con tope de USD 50 por tarjeta.
 
+### Consulta
+
+```sql
+SELECT
+COUNT(*) AS TARJETAS_IMPACTADAS,
+ROUND(SUM(AMT), 2)    AS GASTO_TOT,
+ROUND(SUM(LEAST(0.07 * AMT, 50)), 2)   AS CASHBACK,
+SUM(
+CASE WHEN 0.07 * AMT >= 50 THEN 1 ELSE 0 END
+) AS TARJETAS_CON_TOPE
+FROM
+(
+SELECT CARD_ID, SUM(AMT) AS AMT FROM DB_CARDS
+WHERE
+   PRODUCT_TYPE='Credit'
+ AND CTRY_CARD = 'Chile'  AND CTRY_MRCH <> 'Chile'
+ AND MONTH(DATE) = 5
+ AND AMT > 0
+ GROUP BY CARD_ID
+  )
+```
+
+**Comentario:** La campaña pudo llegar a más de 4 mil tarjetas impactando a 4029 tarjetas de credito. El 66% de las tarjetas estuvieron en el tope del cashback. El costo total del cashback es 178.608,19 usd.
+
 ### Resultados
 
 | Indicador | Valor |
