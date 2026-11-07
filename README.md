@@ -66,7 +66,7 @@ Cuenta las tarjetas distintas por año, trimestre y tipo de producto, usando sol
 | T2 2024 | Crédito | 51.037 |
 | T2 2024 | Débito | 8.960 |
 
-**Lectura:** las tarjetas de crédito activas crecen 9 % de T1 a T2, y las de débito, 9 %. Las devoluciones (`AMT < 0`) no cuentan como actividad.
+**Comentario:** las tarjetas de crédito activas crecen 9 % de T1 a T2, y las de débito, 9 %. Las devoluciones (`AMT < 0`) no cuentan como actividad.
 
 ### Pregunta 2 – Ticket trimestral: gasto promedio por tarjeta de crédito
 
@@ -88,7 +88,7 @@ Gasto total dividido entre el número de tarjetas distintas, por trimestre.
 | T1 2024 | USD 3.232,46 |
 | T2 2024 | USD 5.024,57 |
 
-**Justificación:** el gasto por tarjeta es el indicador que pide el enunciado. En T2 sube 55 % por dos factores: cada tarjeta compra más veces (de 19 a 22,5 transacciones por trimestre) y el ticket sube 32 % (de USD 169 a USD 224).
+**Comentario:** Tenemos un mayor gasto prom por tarjeta de credito en el Trim2, concentrandose en los productos 4 y 5.
 
 ### Pregunta 3 – Monto promedio por producto en Sudamérica
 
@@ -117,7 +117,7 @@ Se filtra por país de emisión de la tarjeta (`CTRY_CARD`) en Argentina, Bolivi
 | P4 | USD 593,29 | 139.957 |
 | P5 | USD 1.010,47 | 69.399 |
 
-**Lectura:** P5 tiene un ticket unas 15 veces mayor que P1, pero la décima parte de sus transacciones. P1 parece ser el producto de uso diario.
+**Comentario:** P5 tiene un ticket unas 15 veces mayor que P1, pero la décima parte de sus transacciones. P1 parece ser el producto de uso diario.
 
 ### Pregunta 4 – Top 10 de categorías por porcentaje de gasto
 
@@ -149,7 +149,7 @@ Se agrupa por `MCG_NAME`, se excluyen los nulos y el porcentaje se calcula sobre
 | Automotive | 12.788.960 | 2,97 % |
 | Education and Books | 9.955.326 | 2,31 % |
 
-**Justificación:** se usa categoría y no comercio porque cada comercio aparece en varias categorías. El porcentaje incluye todo el gasto positivo, así que los 10 primeros suman el 91,5 % y el resto corresponde a otras categorías.
+**Comentario:** se usa categoría y no comercio porque cada comercio aparece en varias categorías. El porcentaje incluye todo el gasto positivo, así que los 10 primeros suman el 91,5 % y el resto corresponde a otras categorías.
 
 ### Pregunta 5 – Adopción tecnológica: gasto contactless por país
 
@@ -168,7 +168,25 @@ GROUP BY CTRY_CARD
 ORDER BY CONTACTLESS_PCT DESC;
 ```
 
-[Completar con la salida de la consulta: porcentaje de gasto contactless por país, ordenado de mayor a menor.]
+| País | Gasto (USD) | Gasto contactless (USD) | % contactless |
+|---|---|---|---|
+| Mexico | 101.846.353,7 | 71.576.648,3 | 70,28 % |
+| Colombia | 50.585.354,9 | 35.530.595,3 | 70,24 % |
+| Brazil | 104.058.006,4 | 72.973.291,1 | 70,13 % |
+| Argentina | 77.468.241,8 | 54.265.698,6 | 70,05 % |
+| Chile | 41.006.749,7 | 28.707.346,1 | 70,01 % |
+| El Salvador | 2.168.038,7 | 450.531,5 | 20,78 % |
+| Costa Rica | 2.193.529,5 | 445.544,3 | 20,31 % |
+| Bolivia | 3.200.000,5 | 643.865,4 | 20,12 % |
+| Republica Dominicana | 3.217.168,2 | 647.004,6 | 20,11 % |
+| Peru | 14.357.936,1 | 2.878.721,6 | 20,05 % |
+| Uruguay | 2.111.170,3 | 421.115,8 | 19,95 % |
+| Ecuador | 10.143.613,9 | 2.023.358,1 | 19,95 % |
+| Panama | 10.215.946,4 | 2.018.220,7 | 19,76 % |
+| Nicaragua | 1.024.423,8 | 201.606,0 | 19,68 % |
+| Honduras | 1.917.501,3 | 375.673,6 | 19,59 % |
+| Guatemala | 4.021.793,3 | 787.560,3 | 19,58 % |
+| Paraguay | 1.016.328,1 | 194.847,3 | 19,17 % |
 
 **Justificación:** el porcentaje se calcula sobre el gasto positivo del país de emisión, igual que en el resto del análisis.
 
